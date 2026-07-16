@@ -61,6 +61,8 @@ TEAL = "#2ec4c0"
 TEAL_DARK = "#1a8f8c"
 LIGHT_BG = "#f4f8fa"
 CARD_BG = "#ffffff"
+FORM_PURPLE = "#514c8f"
+FORM_PURPLE_DARK = "#3f3a78"
 
 st.markdown(f"""
 <style>
@@ -76,6 +78,43 @@ st.markdown(f"""
 
     .stApp {{
         background: {LIGHT_BG};
+        color: {NAVY};
+    }}
+
+    /* ---- Readable text on the light app background ---- */
+    [data-testid="stAppViewContainer"] h1,
+    [data-testid="stAppViewContainer"] h2,
+    [data-testid="stAppViewContainer"] h3,
+    [data-testid="stAppViewContainer"] h4,
+    [data-testid="stAppViewContainer"] p,
+    [data-testid="stAppViewContainer"] label,
+    [data-testid="stAppViewContainer"] [data-testid="stCaptionContainer"] {{
+        color: {NAVY} !important;
+    }}
+
+    /* Keep text white where the background is intentionally dark. */
+    .login-hero, .login-hero h1, .login-hero p,
+    .bl-hero, .bl-hero h2, .bl-hero p {{
+        color: #ffffff !important;
+    }}
+
+    /* ---- High-contrast blue-purple login fields ---- */
+    div[data-baseweb="input"] > div,
+    div[data-baseweb="select"] > div {{
+        background: linear-gradient(135deg, {FORM_PURPLE_DARK}, {FORM_PURPLE}) !important;
+        border: 1px solid #7774bd !important;
+        color: #ffffff !important;
+    }}
+    div[data-baseweb="input"] input,
+    div[data-baseweb="select"] *,
+    div[data-baseweb="input"] svg,
+    div[data-baseweb="select"] svg {{
+        color: #ffffff !important;
+        fill: #ffffff !important;
+    }}
+    div[data-baseweb="input"] input::placeholder {{
+        color: #deddf4 !important;
+        opacity: 1 !important;
     }}
 
     /* ---- Sidebar ---- */
@@ -183,7 +222,8 @@ for k, v in defaults.items():
 
 
 def is_pathologist():
-    return st.session_state.profession == "Pathologist"
+    """Return True for the two professions allowed to use smear analysis."""
+    return st.session_state.profession in {"Doctor", "Pathologist"}
 
 
 # ────────────────────────────────────────────────────────────────────────────
@@ -194,7 +234,7 @@ def login_page():
 
     with left:
         st.markdown(f"""
-        <div style="background:linear-gradient(160deg, {NAVY} 0%, {NAVY_DARK} 100%);
+        <div class="login-hero" style="background:linear-gradient(160deg, {NAVY} 0%, {NAVY_DARK} 100%);
                     border-radius:18px; padding:48px 42px; height:640px; color:white;">
             <span class="bl-badge" style="background:rgba(255,255,255,0.1); color:#bfe9e6;">
                 ● Private clinical workspace
@@ -243,8 +283,22 @@ def login_page():
         password = st.text_input("Password", type="password", placeholder="At least 8 characters")
         profession = st.selectbox(
             "What is your profession?",
-            ["Select your profession", "Pathologist", "Hematologist", "General Physician",
-             "Nurse", "Lab Technician", "Medical Student", "Other Clinician"],
+            [
+                "Select your profession",
+                "Doctor", "Pathologist", "Hematologist", "General Physician",
+                "Surgeon", "Dentist", "Pharmacist", "Nurse", "Lab Technician",
+                "Medical Researcher", "Medical Student", "Other Healthcare Professional",
+                "Chartered Accountant", "Accountant", "Auditor", "Investment Banker",
+                "Banker", "Financial Analyst", "Financial Advisor", "Insurance Professional",
+                "Real Estate Professional", "Property Manager", "Lawyer", "Consultant",
+                "Engineer", "Software Developer", "Data Scientist", "Cybersecurity Professional",
+                "Architect", "Teacher", "Professor", "Student", "Scientist", "Researcher",
+                "Entrepreneur", "Business Owner", "Sales Professional", "Marketing Professional",
+                "Human Resources Professional", "Government Employee", "Civil Servant",
+                "Tour Guide", "Travel Professional", "Hospitality Professional", "Journalist",
+                "Designer", "Artist", "Agriculture Professional", "Skilled Tradesperson",
+                "Retired", "Other",
+            ],
         )
 
         if st.button("Sign in securely →", use_container_width=True):
@@ -546,9 +600,9 @@ def about_page():
     for col, (num, title, body) in zip([c1, c2, c3], cards):
         with col:
             st.markdown(f"""
-            <div class="bl-card" style="height:190px;">
+            <div class="bl-card safety-card" style="height:190px; color:{NAVY};">
                 <div class="bl-kicker">{num}</div>
-                <div style="font-weight:700; font-size:1.1em; margin:6px 0;">{title}</div>
+                <div style="font-weight:700; font-size:1.1em; margin:6px 0; color:{NAVY};">{title}</div>
                 <div style="color:#6b7d87; font-size:0.88em;">{body}</div>
             </div>
             """, unsafe_allow_html=True)
